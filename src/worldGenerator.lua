@@ -14,6 +14,7 @@ local mapList = {
 worldGenerator = {}
 
 -- Cycle through the worldGenList and generate a mapList. Then save this mapList.
+-- TODO: Rework this to be able to make much bigger maps. Will also require a rewrite of many other functions
 function worldGenerator:generateMap(name, sizeX, sizeY)
 	logHandler:debug("Generating mapList")
 	local objects = {}
@@ -93,12 +94,9 @@ function worldGenerator:generateMap(name, sizeX, sizeY)
 			end
 		end
 	end
-	
-	--mapList.objects = {}
-	--mapList.objects = objectHandler:saveObjects()
-	
+
 	mapFunctions:saveMap(name, mapList)
-	logHandler:info("Generated mapList in "..(os.time() - t))
+	logHandler:debug("Generated mapList in "..(os.time() - t))
 	
 end
 
@@ -157,7 +155,6 @@ end
 -- Generate a standard map. 
 -- TODO: Add a better way to add new kinds of maps
 function worldGenerator:standardMap(name, sizeX, sizeY)
-	--worldGenerator:addWorldGenTile("flowers", "flowers", "grass", 10, { "biological", "land" } )
 	worldGenerator:addWorldGenTile("background", "grass", nil, 100, { "land", "ground" } )
 	
 	

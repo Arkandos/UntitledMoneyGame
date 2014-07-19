@@ -1,4 +1,4 @@
-
+-- Just a simple list to quickly reference colors.
 colorList = {}
 
 colorList.red = {255, 0, 0, 255}

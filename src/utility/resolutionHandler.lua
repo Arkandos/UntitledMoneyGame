@@ -1,4 +1,6 @@
+resolutionHandler = {}
 
+-- List of valid resolutions
 local resolutions = {
 	{ width = 800, height = 600   },
 	{ width = 1280, height = 720  },
@@ -7,22 +9,23 @@ local resolutions = {
 
 }
 
-resolutionHandler = {}
-
-
+-- Sets the window to the resolution specified in the configfile
 function resolutionHandler:init()
 	local r = configHandler:getValue("resolution")
 	resolutionHandler:changeResolution(r.width, r.height)
 end
 
+-- Gets the list of all valid resolutions
 function resolutionHandler:getResolutions()
 	return resolutions
 end
 
+-- Returns the current resolution
 function resolutionHandler:getCurrentResolution()
 	return configHandler:getValue("resolution")
 end
 
+-- Checks if the resolution specified is valid.
 function resolutionHandler:checkResolution(w, h)
 	for k, v in pairs(resolution) do
 		if v.width == w and v.height == h then return true end
@@ -30,12 +33,14 @@ function resolutionHandler:checkResolution(w, h)
 	return false
 end
 
+-- Changes to the specified resolution
 function resolutionHandler:changeResolution(width, height)
 	local success = love.window.setMode(width, height)
 	return success
 end
 
-
+-- Increases or decreases the current resolution in the direction specified.
+-- Valid directions: "up", "down"
 function resolutionHandler:changeResolutionStep(dir)
 	local number
 	local currentRes = resolutionHandler:getCurrentResolution()

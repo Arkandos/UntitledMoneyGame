@@ -1,6 +1,7 @@
 local temperature = {}
 
---logHandler:debug("TEMPERATURE")
+-- Utility class for handling temperature.
+-- NOTE: this class should not be derived directly. Use base:derive instead
 
 function temperature:initTemp()
 	if self.data.temperature == nil then self.data.temperature = { amount = 0, min = 0, max = 0 } end
@@ -59,14 +60,10 @@ function temperature:getMaxTemp()
 	return self.data.temperature.max
 end
 
+-- Returns the percentage heat stored out of the maximum
 function temperature:getHeatProgress()
 	self:initTemp()
 	return self:getTemp() / self:getMaxTemp()
-end
-
-function temperature:getColdProgress()
-	self:initTemp()
-	return self:getTemp() / self:getMinTemp()
 end
 
 return temperature

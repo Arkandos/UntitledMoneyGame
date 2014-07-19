@@ -3,6 +3,7 @@ game = {}
 
 local state
 
+-- Sets the current gamestate to "loading"
 function game:init()
 	state = "loading"
 end
@@ -77,6 +78,7 @@ function game:subtractResource(resource, amount)
 	return r
 end
 
+-- Local function that should not be used outside this file
 function game:returnResource(resource, amount)
 	if game.resources[resource] - amount >= 0 then
 		return amount

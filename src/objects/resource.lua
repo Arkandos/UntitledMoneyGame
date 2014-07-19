@@ -2,8 +2,9 @@ local resource = objectHandler:derive("base")
 
 baseInit = resource.init
 
--- The base class for all resource producing / extracting objects
+-- The base class for all natural resources
 
+-- Inits the baseclass first, then resource data
 function resource:init(name, x, y, data)
 	baseInit(self, name, x, y, data)
 	resource:setResource(data.resourceType, data.resourceAmount)
@@ -11,6 +12,7 @@ function resource:init(name, x, y, data)
 	--logHandler:debug("RESOURCE:INIT()")
 end
 
+-- Sets the current resource
 function resource:setResource(name, amount)
 	self.data.resourceType = name
 	self.data.resourceAmount = amount
@@ -50,6 +52,8 @@ function resource:subtractResource(amount)
 	end
 end
 
+-- Increases resource amount after a certain amount of time
+-- TODO: Rework this to not save the rate in data
 function resource:replenish(dt)
 	self:timerInit( "replenish" )
 	self:timerInc( "replenish", dt )

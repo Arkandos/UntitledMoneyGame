@@ -1,6 +1,7 @@
 
 menu = {}
 
+-- Gives the main menu a random color each time restarted. TODO: Make this a config option once the options screen is in.
 local mainMenuColor = utility:randomizeColor()
 local localFiles, holdObject
 local gameMenuList = {}
@@ -56,6 +57,7 @@ function menu:mainMenu()
 	end
 end
 
+-- Inits all buttons that should be visible during the game
 function menu:gameMenuInit()
 	guiHandler:newButton("buildIronMine", "Iron mine", menu.holdObject, { name = "ironMine", data = { mode = 4 } }, nil, 0, love.window.getHeight() - 50, 100, 50, true, "gameMenu" )
 	guiHandler:newButton("buildFlowerpicker", "Flower picker", menu.holdObject, { name = "flowerpicker", data = { mode = 9 } }, nil, 100, love.window.getHeight() - 50, 100, 50, true, "gameMenu" )
@@ -64,6 +66,7 @@ function menu:gameMenuInit()
 	guiHandler:newButton("sellObject", "Sell", menu.holdObject, { name = "bomb", data = {} }, nil, love.window.getWidth() - 100, love.window.getHeight() - 50, 100, 50, true, "gameMenu" )
 end
 
+-- Draws the overlay. 
 function menu:gameMenu()
 	love.graphics.setColor(colorList.white)
 	love.graphics.rectangle("fill", 0, 0, love.window.getWidth(), 30)
@@ -84,6 +87,7 @@ function menu:gameMenu()
 	love.graphics.print("Pig iron "..game:getResource("pigIron"), 200, 5)
 end
 
+-- Opens the map specified
 function menu:openMap(name)
 	for i=1, localFiles do
 		guiHandler:changeButton("delete save"..i, {visible = false}, "mainMenu" )
@@ -98,6 +102,7 @@ function menu:openMap(name)
 	mapFunctions:openMap(name)
 end
 
+-- Deletes the map specified
 function menu:deleteMap(args)
 	local name = args.name
 	local id = args.id
@@ -106,14 +111,17 @@ function menu:deleteMap(args)
 	guiHandler:changeButton("delete "..id, {visible = false}, "mainMenu" )
 end
 
+-- Changes resolution in <dir>
 function menu:changeRes(dir)
 	resolutionHandler:changeResolutionStep(dir)
 end
 
+-- Makes the mouse "hold" an object
 function menu:holdObject(args)
 	holdObject = args
 end	
 
+-- Drops an object on tile tx, ty
 function menu:dropObject(tx, ty, button)
 	if holdObject ~= nil then
 
@@ -146,10 +154,12 @@ function menu:dropObject(tx, ty, button)
 	return false
 end
 
+-- Returns the currently held object
 function menu:getHoldObject()
 	return holdObject
 end
 
+-- Draws the currently held object
 function menu:drawHoldObject()
 	if holdObject ~= nil then
 		local x, y = love.mouse.getPosition()
@@ -183,6 +193,7 @@ function menu:drawHoldObject()
 	end
 end
 
+-- Sells the object at tx, ty
 function menu:sellObject( tx, ty )
 	local o = objectHandler:getObject( tx, ty )
 	if o == nil then
@@ -193,6 +204,7 @@ function menu:sellObject( tx, ty )
 	end
 end
 
+-- Toggles the debug mode
 function menu:toggleDebug()
 	debugActive = not debugActive
 	if debugActive then

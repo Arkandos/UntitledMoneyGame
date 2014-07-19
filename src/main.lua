@@ -20,15 +20,17 @@ local version = "Alpha 0.1.2"
 local windowName = "Untitled Money Game v."..version
 
 
+-- Main function. Load everything else
 function love.load()
 	-- Pre-Loading phase
-	-- Load all textures and the font
+	-- Load all textures, the font and other core features. Also load config values
+	logHandler:debug("Starting pre-loading phase")
 	configHandler:init()
 	resolutionHandler:init()
 	debugActive = configHandler:getValue("debug", false)
+	autoSaveRate = configHandler:getValue("autoSaveRate", 60)
 	love.window.setTitle(windowName)
 	game:init()
-	logHandler:debug("Starting pre-loading phase")
 	saveDir = love.filesystem.getSaveDirectory()
 	textureList:loadTextures("tileset.png", 32, 32)
 	font = love.graphics.newFont("images/CaviarDreams.ttf", 15)
@@ -42,8 +44,10 @@ function love.load()
 	objectHandler:load()
 	guiHandler:init()
 	menu:mainMenu()
-	autoSaveRate = configHandler:getValue("autoSaveRate", 60)
 	
+	
+	-- End of loading phase
+	-- Output info to the console
 	logHandler:debug("Loading phase has ended")
 	logHandler:info("Savedirectory: "..saveDir)
 	logHandler:info("Width: "..love.window.getWidth()..", Height: "..love.window.getHeight())
@@ -80,7 +84,6 @@ function love.update(dt)
 end
 
 function love.mousepressed(x, y, button)
-	--print(math.floor(x)..", "..math.floor(y))
 	local tx, ty = utility:convertToTilePos(x, y)
 	logHandler:debug(tx..", "..ty)
 	if menu:dropObject(tx, ty, button) then return true end
@@ -122,6 +125,8 @@ function love.focus()
 end
 
 function love.quit()
+	-- Save the map.
+	-- Set the state to quitting
 	game:setState("quitting")
 	mapFunctions:saveMap(mapFunctions:getMapName(), mapFunctions:getMap())
 end

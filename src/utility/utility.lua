@@ -24,8 +24,8 @@ function utility:convertToTilePos( x, y )
 	return math.floor( math.floor(x) / 32 ) + 1, math.floor( math.floor(y) / 32 )
 end
 
+-- Capitilizes first letter in a string
 function utility:firstToUpper(s)
-	--print("CAPITILIZING "..tostring(s))
 	s = tostring(s)
 	return (s:gsub("^%l", string.upper))
 end

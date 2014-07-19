@@ -3,7 +3,7 @@ local tileW, tileH, tileset, quads, tileTable, map, mapName
 
 mapFunctions = {}
 
--- Loads a map from the path
+-- Loads a map from the path. Also loads userdata and objects
 function mapFunctions:loadMap(path)
 	map = Tserial.unpack( love.filesystem.read( "maps/"..path..".lua") )
 	game:loadUserdata()
@@ -41,7 +41,7 @@ function mapFunctions:getObjects()
 	return map.objects
 end
 
--- Returns the tile at coord
+-- Returns the tile at coord. Uses realCoordinates
 function mapFunctions:getTile(x, y)
 	for i=1, #map.tiles do
 
@@ -73,7 +73,7 @@ function mapFunctions:changeTile(x, y, tileName)
 end
 
 
--- Deprecated?
+-- Deprecated. Do not use.
 function mapFunctions:newMap(tileWidth, tileHeight, tilesetPath, tileString, quadInfo)
 	tileW = tileWidth
 	tileH = tileHeight
@@ -107,6 +107,7 @@ function mapFunctions:newMap(tileWidth, tileHeight, tilesetPath, tileString, qua
 	
 end
 
+-- Draws all tiles in the currently loaded map
 function mapFunctions:drawMap()
 	for columnIndex, column in ipairs(map.tiles) do
 		for rowIndex, char in ipairs(column) do
@@ -114,20 +115,9 @@ function mapFunctions:drawMap()
 			love.graphics.draw(textureList.tileset, textureList.quads[char], x, y)
 		end
 	end
-	
-	--[[for columnIndex, column in ipairs(map.objects) do
-		for rowIndex, char in ipairs(column) do
-			local y, x = (columnIndex-1)*textureList.tilesetList.tileW, (rowIndex-1)*textureList.tilesetList.tileH
-			for k, v in pairs(char) do
-				if k == "texture" then
-					love.graphics.draw(textureList.objects[v] , x, y)
-				end
-			end
-		end
-	end--]]
 end
 
--- Save the map
+-- Save the map. Also saves all objects and userdata. Use sparingly
 function mapFunctions:saveMap(name, m)
 	if name == nil then
 		if mapName == nil then
@@ -163,6 +153,7 @@ function mapFunctions:saveMap(name, m)
 	end
 end
 
+-- Tries to open a map. If map does not exist, generates a new one and opens that 
 function mapFunctions:openMap(name)
 	logHandler:debug("Searching for /maps/"..name..".lua")
 	if love.filesystem.exists("maps/"..name..".lua") then
@@ -179,6 +170,7 @@ function mapFunctions:openMap(name)
 	guiHandler:setCurrentPage("gameMenu")
 end
 
+-- Deletes a map
 function mapFunctions:deleteMap(name)
 	logHandler:info("Deleting map "..name)
 	love.filesystem.remove("maps/"..name..".lua")

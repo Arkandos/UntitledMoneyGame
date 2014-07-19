@@ -1,3 +1,4 @@
+-- Path to object directory
 local path = "objects/"
 local objects = {}
 local register = {}
@@ -5,7 +6,7 @@ local ids = 1
 
 objectHandler = {}
 
--- Register all objects
+-- Register all objects and their group
 function objectHandler:load()
 	
 	
@@ -52,6 +53,7 @@ function objectHandler:saveObjects()
 	return t
 end
 
+-- Returns the object at x, y. Uses real coordinates.
 function objectHandler:getObject(x, y)
 	--print("Trying to get object")
 	for k, v in pairs(objects) do
@@ -82,6 +84,8 @@ function objectHandler:update(dt)
 end
 
 -- Make another object the parent of this object
+-- Displays errors if the parent contains errors
+-- TODO: Warn when loading a save containing erroring objects
 function objectHandler:derive(name)
 	--logHandler:debug("Deriving "..name)
 	local ok, chunk, result
@@ -105,13 +109,13 @@ function objectHandler:register(name, objType)
 	logHandler:debug("Registrering "..name.. " in object registry")
 end
 
--- Create an object
-function objectHandler:create(name, x, y, data)
+-- Create an objects. Uses tileCoordinates
+function objectHandler:create(name, tx, ty, data)
 	if register[name] then
 		--print("Creating "..name)
 		local obj = register[name]()
 		ids = ids + 1
-		obj:init(name, x, y, data)
+		obj:init(name, tx, ty, data)
 		
 		
 		objects[ids] = obj
@@ -122,21 +126,22 @@ function objectHandler:create(name, x, y, data)
 	end
 end
 
--- Delete an object
-function objectHandler:delete(x, y)
+-- Delete an object at x, y. Uses tileCoordinates
+function objectHandler:delete(tx, ty)
 	for k, v in pairs(objects) do
-		if v.data.x == x and v.data.y == y then
-			table.remove(objects, k)
+		if v.data.tx == tx and v.data.ty == ty then
+			logHandler:debug("Deleting object at "..tx.."x "..ty.."y")
+			objects[k] = nil
 		end
 	end
 end
 
--- Get adjacent objects 
+-- Get adjacent objects
 function objectHandler:getAdjacentObjects(x, y, mode)
 	if mode == nil then mode = 4 end
 	if x == nil or y == nil then return false end
 	
-
+	-- Gets all directly ajacent objects
 	if mode == 4 then
 		local t = {}
 	
@@ -147,6 +152,8 @@ function objectHandler:getAdjacentObjects(x, y, mode)
 		
 		
 		return t
+		
+	-- Gets all objects in a 3x3 area
 	elseif mode == 9 then
 		local t = {}
 		
@@ -164,32 +171,29 @@ function objectHandler:getAdjacentObjects(x, y, mode)
 	end
 end
 
+-- Returns the tooltip of an object. Uses realCoordinates
 function objectHandler:getTooltip(x, y)
 	local tx, ty = utility:convertToTilePos(x, y)
 	local o = objectHandler:getObject(tx, ty)
 	local t = {}
 	
-	--print(tostring(o))
 	if o == nil then
 		return false
 	end
 	
 	t.name = o.data.id
 	if o.data.resourceType ~= nil then
-		--print("Found extra resource tooltip")
 		t.resourceType = o.data.resourceType
 		t.resourceAmount = o.data.resourceAmount
 	end
 	
 	if o.tooltips ~= nil then
-		--print("Found extra resource tooltips, adding")
 		for k, v in pairs( o.tooltips ) do
 			t[k] = v
 		end
 	end
 	
 	if o.data.extractionRate ~= nil then
-		--print("Found extra extraction tooltips, adding")
 		t.extractionRate = o.data.extractionRate
 		t.extractionAmount = o.data.extractionAmount
 	end

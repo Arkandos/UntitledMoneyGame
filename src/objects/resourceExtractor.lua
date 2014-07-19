@@ -2,6 +2,9 @@ local resourceExtractor = objectHandler:derive("base")
 
 baseInit = resourceExtractor.init
 
+-- The base class for all resource extractors
+
+-- Setup all needed values
 function resourceExtractor:init(name, x, y, data)
 	local baseExtractionRate, baseExtractionAmount = 5, 10
 	baseInit(self, name, x, y, data)
@@ -17,6 +20,7 @@ function resourceExtractor:init(name, x, y, data)
 	self:setMode(self.data.mode)
 end
 
+-- Extracts resources if they match one of the specified groups. Tries to autoSell resource specified
 function resourceExtractor:extractResources(group, amount, autoSell)
 	local t = objectHandler:getAdjacentObjects(self.data.tx, self.data.ty, self.data.mode)
 	
@@ -50,6 +54,7 @@ function resourceExtractor:extractResources(group, amount, autoSell)
 	end
 end
 
+-- Automatically extracts resources after a certain time.
 function resourceExtractor:autoExtract(dt, group, autoSell)
 	if autoSell == nil then autoSell = false end
 	self:timerInit( "autoExtract" )
@@ -64,6 +69,7 @@ function resourceExtractor:autoExtract(dt, group, autoSell)
 	
 end
 
+-- Sets the extractionmode. See objectHandler:getAjacentObjects
 function resourceExtractor:setMode(number)
 	if number == 4 or number == 9 then self.data.mode = number end
 end
