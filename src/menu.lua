@@ -2,8 +2,7 @@
 menu = {}
 
 -- Gives the main menu a random color each time restarted. TODO: Make this a config option once the options screen is in.
-local mainMenuColor = utility:randomizeColor()
-local localFiles, holdObject
+local localFiles, holdObject, mainMenuColor
 local gameMenuList = {}
 
 function menu:update(dt)
@@ -22,6 +21,13 @@ end
 
 -- Setup the main menu
 function menu:mainMenu()
+	if configHandler:getValue( "randomizeMainMenu", true ) == true then
+		mainMenuColor = utility:randomizeColor()
+	else
+		mainMenuColor = colorList.black
+	end
+
+
 	local width, height = love.window.getDimensions()
 	local files = love.filesystem.getDirectoryItems("maps")
 	local xWidth = 300
@@ -41,20 +47,11 @@ function menu:mainMenu()
 	end
 	
 	for i=localFiles + 1, 3 do
-		guiHandler:newTextBox("save"..i, "-- Empty save -- ", menu.openMap, "save"..i, nil, x, y, xWidth, yHeight, true, "mainMenu")
+		guiHandler:newTextBox("save"..i, "-- Empty save -- ", menu.openMap, nil, nil, x, y, xWidth, yHeight, true, "mainMenu")
 		y = y + 100
 	end
 	
-	guiHandler:newButton("increaseResolution", [[/\]], menu.changeRes, "up", nil, x + xWidth + 50, y + 100, 50, yHeight / 2, true, "mainMenu", { name = "Increase resolution" } )
-	guiHandler:newButton("decreaseResolution", [[\/]], menu.changeRes, "down", nil, x + xWidth + 150, y + 100, 50, yHeight / 2, true, "mainMenu", { name = "Decrease resolution" } )
-	
-	guiHandler:newButton("toggleDebugmode", "Debug", menu.toggleDebug, nil, nil, x - xWidth, y + 100, 150, yHeight / 2, true, "mainMenu", { name = "Toggle debugging mode" } )
-
-	if debugActive then
-		guiHandler:changeButton("toggleDebugmode", { colors = {boxColor = colorList.green, textColor = colorList.black} } )
-	else
-		guiHandler:changeButton("toggleDebugmode", { colors = {boxColor = colorList.white, textColor = colorList.black} } )
-	end
+	guiHandler:newButton("optionsMenu", "Options", guiHandler.setCurrentPage, "optionsMenu", nil, x - xWidth, y + 100, 150, yHeight / 2, true, "mainMenu" )
 end
 
 -- Inits all buttons that should be visible during the game
@@ -92,17 +89,37 @@ function menu:gameMenu()
 	love.graphics.print("Pig iron "..game:getResource("pigIron"), 200, 5)
 end
 
+function menu:optionsMenu()
+	love.graphics.setColor(colorList.white)
+	local width, height = love.window.getDimensions()
+	local xWidth = 300
+	local yHeight = 80
+	local xMid = width / 2
+	local x = width / 2 - xWidth / 2
+	local y = 100
+	
+	guiHandler:newButton("mainMenu", "Main menu", guiHandler.setCurrentPage, "mainMenu", nil, x, height - 100, xWidth, yHeight / 2, true, "optionsMenu" )
+	guiHandler:newButton("increaseResolution", [[/\]], menu.changeRes, "up", nil, xMid - 100, y + 100, 50, yHeight / 2, true, "optionsMenu", { name = "Increase resolution" } )
+	guiHandler:newButton("decreaseResolution", [[\/]], menu.changeRes, "down", nil, xMid + 50, y + 100, 50, yHeight / 2, true, "optionsMenu", { name = "Decrease resolution" } )
+	guiHandler:newButton("toggleDebugmode", "Debug", menu.toggleDebug, nil, nil, x, y + 200, xWidth, yHeight / 2, true, "optionsMenu", { name = "Toggle debugging mode" } )
+	
+	if debugActive then
+		guiHandler:changeButton("toggleDebugmode", { colors = {boxColor = colorList.green, textColor = colorList.black} }, "optionsMenu" )
+	else
+		guiHandler:changeButton("toggleDebugmode", { colors = {boxColor = colorList.white, textColor = colorList.black} }, "optionsMenu" )
+	end
+end
+
 -- Opens the map specified
 function menu:openMap(name)
-	for i=1, localFiles do
+	--[[ for i=1, localFiles do
 		guiHandler:changeButton("delete save"..i, {visible = false}, "mainMenu" )
 	end
 	
 	guiHandler:changeButton("save1", {visible = false}, "mainMenu" )
 	guiHandler:changeButton("save2", {visible = false}, "mainMenu"  )
 	guiHandler:changeButton("save3", {visible = false}, "mainMenu"  )
-	guiHandler:changeButton("increaseResolution", {visible = false}, "mainMenu"  )
-	guiHandler:changeButton("decreaseResolution", {visible = false}, "mainMenu"  )
+	]]--
 	
 	mapFunctions:openMap(name)
 end
@@ -224,3 +241,14 @@ end
 function menu:openMenu( args )
 	guiHandler:openMenu( args.name, args.x, args.y )
 end
+
+function menu:setConfigValue( key, value )
+	configHandler:setValue( key, value )
+end
+
+function menu:setConfigNumber( key, value )
+	if tonumber(value) ~= nil then
+		configHandler:setValue( key, tonumber(value))
+	end
+end
+

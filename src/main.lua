@@ -44,6 +44,7 @@ function love.load()
 	objectHandler:load()
 	guiHandler:init()
 	menu:mainMenu()
+	menu:optionsMenu()
 	
 	
 	-- End of loading phase
@@ -53,6 +54,7 @@ function love.load()
 	logHandler:info("Width: "..love.window.getWidth()..", Height: "..love.window.getHeight())
 	logHandler:config("Autosaving every "..autoSaveRate.." seconds" )
 	logHandler:config("Updating tooltips every "..configHandler:getValue("tooltipUpdateRate").." seconds" )
+	logHandler:config("Randomizing mainmenu color: "..tostring(configHandler:getValue("randomizeMainMenu", true)))
 	--objectHandler:create("flowerpicker", 10, 10)
 end 
 

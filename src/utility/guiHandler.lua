@@ -187,6 +187,7 @@ function guiHandler:mousePressed(x, y, button)
 				if v.visible then
 					if utility:checkHitbox( x, y, v.x, v.y, v.x + v.width, v.y + v.height ) then
 						guiHandler:closeMenu()
+						if v.func == nil then return true end
 						v.func(self, v.args)
 						return true
 					end
@@ -200,6 +201,7 @@ function guiHandler:mousePressed(x, y, button)
 			if v.visible then
 				if utility:checkHitbox( x, y, v.x, v.y, v.x + v.width, v.y + v.height ) then
 					
+					if v.func == nil then return true end
 					if v.textbox ~= nil then
 						guiHandler:openTextBox(k)
 					else
@@ -327,7 +329,11 @@ end
 function guiHandler:closeTextBox(name, page)
 	if page == nil then page = currentPage end
 	local v = guiHandler.objects[page][name]
-	v.func(self, input)
+	if v.args == nil then
+		v.func(self, input)
+	else
+		v.func(self, args, input)
+	end
 	activeTextBox = nil
 	input = ""
 end
