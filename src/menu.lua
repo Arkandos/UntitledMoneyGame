@@ -59,17 +59,22 @@ end
 
 -- Inits all buttons that should be visible during the game
 function menu:gameMenuInit()
-	guiHandler:newButton("buildIronMine", "Iron mine", menu.holdObject, { name = "ironMine", data = { mode = 4 } }, nil, 0, love.window.getHeight() - 50, 100, 50, true, "gameMenu" )
-	guiHandler:newButton("buildFlowerpicker", "Flower picker", menu.holdObject, { name = "flowerpicker", data = { mode = 9 } }, nil, 100, love.window.getHeight() - 50, 100, 50, true, "gameMenu" )
-	guiHandler:newButton("buildBlastfurnace", "Blastfurnace", menu.holdObject, { name = "blastfurnace", data = {} }, nil, 200, love.window.getHeight() - 50, 100, 50, true, "gameMenu" )
+	-- Extractors
+	guiHandler:newButton("openExtractorsMenu", "Extractors", menu.openMenu, { name = "extractors", x = 0, y = love.window.getHeight() - 50 }, nil, 0, love.window.getHeight() - 50, 100, 50, true, "gameMenu" )
+	guiHandler:newButton("buildFlowerpicker", "Flower picker", menu.holdObject, { name = "flowerpicker", data = { mode = 9 } }, nil, 100, love.window.getHeight() - 50, 100, 50, true, "gameMenu", { name = "Price: "..economyHandler:getMoneyCost( "flowerpicker" ), desc = { "Picks flowers around it", "Then automagically sells them" } }, "extractors" )
+	guiHandler:newButton("buildIronMine", "Iron mine", menu.holdObject, { name = "ironMine", data = { mode = 4 } }, nil, 0, love.window.getHeight() - 50, 100, 50, true, "gameMenu", { name = "Price: "..economyHandler:getMoneyCost( "ironMine" ), desc = { "Mines iron ore directly adjacent" } }, "extractors" )
 	
-	guiHandler:newButton("sellObject", "Sell", menu.holdObject, { name = "bomb", data = {} }, nil, love.window.getWidth() - 100, love.window.getHeight() - 50, 100, 50, true, "gameMenu" )
+	-- Industry
+	guiHandler:newButton("openIndustryMenu", "Industry", menu.openMenu, { name = "industry", x = 100, y = love.window.getHeight() - 50 }, nil, 100, love.window.getHeight() - 50, 100, 50, true, "gameMenu" )
+	guiHandler:newButton("buildBlastfurnace", "Blastfurnace", menu.holdObject, { name = "blastfurnace", data = {} }, nil, 200, love.window.getHeight() - 50, 100, 50, true, "gameMenu", { name = "Price: "..economyHandler:getMoneyCost( "blastfurnace" ), desc = { "Uses ironore to produce pigiron", "once temperature has reached 80%", "then automagically sells it" } }, "industry" )
+	
+	guiHandler:newButton("sellObject", "Sell", menu.holdObject, { name = "bomb", data = {} }, nil, love.window.getWidth() - 100, love.window.getHeight() - 50, 100, 50, true, "gameMenu", { name = "Sells an object for", desc = {  "20% of its original value" } } )
 end
 
 -- Draws the overlay. 
 function menu:gameMenu()
 	love.graphics.setColor(colorList.white)
-	love.graphics.rectangle("fill", 0, 0, love.window.getWidth(), 30)
+	love.graphics.rectangle("fill", 0, 0, love.window.getWidth(), 32)
 	love.graphics.rectangle("fill", 0, love.window.getHeight() - 50, love.window.getWidth(), love.window.getHeight())
 	
 	love.graphics.setColor(colorList.black)
@@ -214,4 +219,8 @@ function menu:toggleDebug()
 	end
 	logHandler:debug("Debugging value has been changed. Restart game to see changes")
 	configHandler:setValue("debug", debugActive)
+end
+
+function menu:openMenu( args )
+	guiHandler:openMenu( args.name, args.x, args.y )
 end

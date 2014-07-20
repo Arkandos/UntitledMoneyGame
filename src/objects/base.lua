@@ -11,7 +11,7 @@ function base:init(name, x, y, data)
 	self.data.x, self.data.y = utility:convertToRealPos( x, y )
 	self.data.tx = x
 	self.data.ty = y
-	self.data.texture = name
+	if self.data.texture == nil then self.data.texture = name end
 	self.data.id = name
 	if data.group ~= nil then self.data.group = data.group end
 	if self.data.timers == nil then self.data.timers = {} end
@@ -21,7 +21,7 @@ function base:init(name, x, y, data)
 	else
 		
 		if self.data.sellPrice == nil then
-			self.data.sellPrice = math.floor(self.data.buyPrice * 0.5)
+			self.data.sellPrice = math.floor(self.data.buyPrice * 0.2)
 		else
 			self.data.sellPrice = 0
 		end

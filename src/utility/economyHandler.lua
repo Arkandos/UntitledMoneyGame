@@ -40,6 +40,10 @@ function economyHandler:getPrice( name )
 	return priceList[name]
 end
 
+function economyHandler:getMoneyCost( name )
+	return economyHandler:getPrice( name ).moneyCost
+end
+
 -- Sells an amount of a resource from the global resourcePool
 function economyHandler:sellResource( name, amount )
 	local resourceAmount = game:getResource(name)
