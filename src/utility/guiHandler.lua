@@ -1,7 +1,8 @@
 
 guiHandler = {
 	objects = {},
-	tooltips = {}
+	tooltips = {},
+	menus = {}
 }
 
 local activeTextBox, tooltipUpdateRate, buttonTooltipName
@@ -11,6 +12,7 @@ local currentPage = "mainMenu"
 local tooltipX, tooltipY = 0, 0
 
 
+-- Sets the tooltipUpdateRate from the config
 function guiHandler:init()
 	tooltipUpdateRate = configHandler:getValue("tooltipUpdateRate", 1)
 end
@@ -43,11 +45,22 @@ function guiHandler:draw()
 		table.remove(t, x)
 		table.remove(t, y)
 		
+		if x + tooltipWidth > love.window.getWidth() then
+			x = x - tooltipWidth
+		end
+		
+		
 		for key, value in pairs(t) do
 			a = a + 1
 		end
 		
-		love.graphics.rectangle("fill", x, y, tooltipWidth, ( a + 2 ) * 5 )
+		local tooltipHeight = ( a + 2 ) * 5 + 10
+		
+		if y + tooltipHeight > love.window.getHeight() then
+			y = y - tooltipHeight
+		end
+		
+		love.graphics.rectangle("fill", x, y, tooltipWidth, tooltipHeight )
 		
 		
 		guiHandler:drawTooltipLine(v.name, x, y, tooltipWidth)
@@ -147,6 +160,7 @@ function guiHandler:textInput(t)
 	end
 end
 
+-- Sets the current tooltip being displayed
 function guiHandler:setTooltipObject(x, y, name)
 	if name == nil then name = "tooltip1" end
 	local t = objectHandler:getTooltip(x, y)
@@ -171,6 +185,7 @@ function guiHandler:setTooltipButton(tooltip, x, y, name)
 	--print("Set buttonTooltip successfully to "..tostring(tooltip.name).." with x: "..tostring(guiHandler.tooltips[name].x).." and y: "..tostring(guiHandler.tooltips[name].y))
 end
 
+-- Clears a tooltip or if name is nil, clears all tooltips
 function guiHandler:clearTooltip(name, mode)
 	if name == nil then
 		guiHandler.tooltips = {}
@@ -232,25 +247,46 @@ function guiHandler:closeTextBox(name, page)
 	input = ""
 end
 
---function guiHandler:newMenu(
+-- Creates a new menu
+function guiHandler:newMenu( name, page )
+	if page == nil then page = currentPage end
+	guiHandler:newPage( page )
+	guiHandler.menus[page][name] = {}
+end
 
+function guiHandler:addToMenu( menuName, page )
+
+end
+
+function guiHandler:openMenu( name, page )
+	if page == nil then page = currentPage end
+end
+
+function guiHandler:closeMenu( name, page )
+	if page == nil then page = currentPage end
+end
+
+-- Returns a button
 function guiHandler:getButton( name, page )
 	if page == nil then page = currentPage end
 	return guiHandler.objects[page][name]
 end
 
+-- Creates a new page
 function guiHandler:newPage(name)
 	if guiHandler.objects[name] == nil then guiHandler.objects[name] = {} end
+	if guiHandler.menus[name] == nil then guiHandler.menus[name] = {} end
 end
 
+-- Changes the current page. If that page does not exist, creates it
 function guiHandler:setCurrentPage(name)
-	if guiHandler.objects[name] == nil then
-		guiHandler:newPage(name)
-	end
+	guiHandler:newPage(name)
 	currentPage = name
 end
 
-function guiHandler:drawTooltipLine(name, x, y, tooltipWidth)
-	love.graphics.setColor( colorList.black )
+-- Draws a tooltip line
+function guiHandler:drawTooltipLine(name, x, y, tooltipWidth, color)
+	if color == nil then color = "black" end
+	love.graphics.setColor( colorList[color] )
 	love.graphics.printf(utility:firstToUpper( name ), x, y, tooltipWidth, "center")
 end
