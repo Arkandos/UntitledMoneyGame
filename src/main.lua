@@ -16,7 +16,7 @@ require 'game'
 
 
 local autoSaveRate
-local version = "Alpha 0.1.2"
+local version = "Alpha 0.1.4"
 local windowName = "Untitled Money Game v."..version
 
 
